@@ -1,0 +1,49 @@
+{
+    "html": {
+        "avatarOverlay": "Edit"
+    },
+    "js": {
+        "login": {
+            "error": {
+                "invalidValue": "* Required",
+                "requiredValue": "* Required",
+                "userMigrated": {
+                    "title": "Account Error<br>",
+                    "desc": "You attempted to login with a migrated account. Try again with the account email as the username!"
+                },
+                "invalidCredentials": {
+                    "title": "Account Error",
+                    "desc": "Your email or password is incorrect!"
+                },
+                "rateLimit": {
+                    "title": "Login Error:<br>Too Many Attempts",
+                    "desc": "There has been too many login attempts with this account recently. Try again later!"
+                },
+                "noInternet": {
+                    "title": "Login Error:<br>No Internet Connection",
+                    "desc": "You must be connected to the internet in order to login. Connect and try again!"
+                },
+                "authDown": {
+                    "title": "Login Error:<br>Authentication Server Offline",
+                    "desc": "Mojang's authentication server is currently offline or unreachable, wait a moment and try again. You can check the server status on <a href=\"https://help.mojang.com/\">Mojang's Help Portal</a>!"
+                },
+                "notPaid": {
+                    "title": "Login Error:<br>Game Not Purchased",
+                    "desc": "The account you tried to login with has not purchased a copy of Minecraft.<br>You may purchase a copy at <a href=\"https://minecraft.net/\">Minecraft.net</a>!"
+                },
+                "unknown": {
+                    "title": "Login Error:<br>Unknown Error"
+                }
+            },
+            "login": "LOGIN",
+            "loggingIn": "LOGGING IN",
+            "success": "SUCCESS",
+            "tryAgain": "Retry or Reset"
+        },
+        "landing": {
+            "launch": {
+                "pleaseWait": "One moment..."
+            }
+        }
+    }
+}

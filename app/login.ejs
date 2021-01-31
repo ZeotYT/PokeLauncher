@@ -1,0 +1,57 @@
+<div id="loginContainer" style="display: none;">
+    <div id="loginCancelContainer" style="display: none;">
+        <button id="loginCancelButton">
+            <div id="loginCancelIcon">X</div>
+            <span id="loginCancelText">Cancel</span>
+        </button>
+    </div>
+    <div id="loginContent">
+        <form id="loginForm">
+            <img id="loginImageSeal" src="assets/images/main.png" draggable="false"/>
+            <span id="loginSubheader" class="fontSecondary" style="font-size: 40px">MINECRAFT</span>
+            <button id="loginMSButton"><span class="fontPrimary">LOGIN WITH</span><span class="microsoft"><img src="https://PokeResort.b-cdn.net/pokelauncher/microsoft.png" width="22" style="display: inline;">Microsoft</span></button>
+            <hr style="width: 50%;">
+            <span class="fontPrimary" style="margin-bottom: 5px;"><b style="font-size: 16px;">Or, use a Mojang account instead:</b></span>
+            <div class="loginFieldContainer">
+                <span class="loginLabelSpan">EMAIL<i class="fas fa-envelope" style="margin-left: 5px"></i></span>
+                <span class="loginErrorSpan" id="loginEmailError">* Required</span>
+                <input id="loginUsername" class="loginField" type="text" spellcheck="false"/>
+            </div>
+            <div class="loginFieldContainer">
+                <span class="loginLabelSpan">PASSWORD<i class="fas fa-unlock-alt" style="margin-left: 5px"></i></span>
+                <span class="loginErrorSpan" id="loginPasswordError">* Required</span>
+                <input id="loginPassword" class="loginField" type="password" spellcheck="false"/>
+            </div>
+            <div id="loginOptions">
+                <span class="loginSpanDim">
+                    <a href="https://my.minecraft.net/en-us/password/forgot/">Forgot your password?</a>
+                </span>
+                <label id="checkmarkContainer">
+                    <input id="loginRememberOption" type="checkbox" checked>
+                    <span id="loginRememberText" class="loginSpanDim">Remember me</span>
+                    <span class="loginCheckmark"></span>
+                </label>
+            </div>
+            <button id="loginButton" disabled>
+                <div id="loginButtonContent" class="fontSecondary" style="font-size: 38px;">
+                    CONTINUE
+                    <svg id="loginSVG" viewBox="0 0 24.87 13.97" style="margin-top: 5px">
+                        <defs>
+                            <style>.arrowLine{fill:none;stroke:#FFF;stroke-width:2px;transition: 0.25s ease;}</style>
+                        </defs>
+                        <polyline class="arrowLine" points="0.71 13.26 12.56 1.41 24.16 13.02"/>
+                    </svg>
+                    <div class="circle-loader">
+                        <div class="checkmark draw"></div>
+                    </div>
+                    <!--<div class="spinningCircle" id="loginSpinner"></div>-->
+                </div>
+            </button>
+            <div id="loginDisclaimer">
+                <span class="loginSpanDim" style="margin-top: 8px; font-size: 18px;">You need a copy of Minecraft Java Edition! <a href="https://www.minecraft.net/en-us/store/minecraft-java-edition/" style="font-size: 18px; text-decoration: underline;">CLICK HERE TO PURCHASE<img src="https://PokeResort.b-cdn.net/pokelauncher/minecraft.png" width="27" style="display: inline;"></a></span>
+                <p class="loginDisclaimerText" style="font-size: 15px; margin-top:15px;">PokéLauncher is not affiliated with Mojang AB</p>
+            </div>
+        </form>
+    </div>
+    <script src="./assets/js/scripts/login.js"></script>
+</div>
