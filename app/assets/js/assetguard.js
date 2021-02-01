@@ -900,6 +900,8 @@ class AssetGuard extends EventEmitter {
         super()
         this.totaldlsize = 0
         this.progress = 0
+        this.totalToProcess = 0
+        this.processed = 0
         this.assets = new DLTracker([], 0)
         this.libraries = new DLTracker([], 0)
         this.files = new DLTracker([], 0)
@@ -1718,7 +1720,7 @@ class AssetGuard extends EventEmitter {
                         })
                         req.pipe(writeStream)
                         req.resume()
-
+                        this.processed++
                     } else {
 
                         req.abort()
@@ -1752,7 +1754,13 @@ class AssetGuard extends EventEmitter {
                 //self.progress -= dlTracker.dlsize
                 self[identifier] = new DLTracker([], 0)
 
-                if(self.progress >= self.totaldlsize) {
+                //console.log("progress test")
+                //console.log(self.progress)
+                //console.log(self.totaldlsize)
+                //console.log(this.processed)
+                //console.log(this.totalToProcess)
+
+                if(self.progress >= self.totaldlsize || (this.processed >= this.totalToProcess - 1 && self.progress > 0.9 * self.totaldlsize)) {
                     if(self.extractQueue.length > 0){
                         self.emit('progress', 'extract', 1, 1)
                         //self.emit('extracting')
@@ -1794,6 +1802,7 @@ class AssetGuard extends EventEmitter {
 
             for(let iden of identifiers){
                 this.totaldlsize += this[iden.id].dlsize
+                this.totalToProcess += this[iden.id].dlqueue.length
             }
 
             this.once('complete', (data) => {
