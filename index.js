@@ -4,6 +4,7 @@ const autoUpdater                   = require('electron-updater').autoUpdater
 const ejse                          = require('ejs-electron')
 const fs                            = require('fs')
 const isDev                         = require('./app/assets/js/isdev')
+const news                          = require('./app/assets/js/news')
 const path                          = require('path')
 const semver                        = require('semver')
 const url                           = require('url')
@@ -159,6 +160,15 @@ ipcMain.on('openMSALogoutWindow', (ipcEvent, args) => {
 
     MSALogoutWindow.removeMenu()
     MSALogoutWindow.loadURL('https://login.microsoftonline.com/common/oauth2/v2.0/logout')
+})
+
+// Fetch news
+ipcMain.on('getNews', (event, arg) => {
+    news.getNews().then(ret => {
+        event.returnValue = ret
+    }).catch(err => {
+        event.returnValue = 'failed'
+    })
 })
 
 // https://github.com/electron/electron/issues/18397

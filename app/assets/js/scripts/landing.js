@@ -775,7 +775,7 @@ function dlAsync(login = true){
 
 // DOM Cache
 const newsContent                   = document.getElementById('newsContent')
-const newsArticleTitle              = document.getElementById('newsArticleTitle')
+const newsButtonTextArticleTitle    = document.getElementById('newsArticleTitle')
 const newsArticleDate               = document.getElementById('newsArticleDate')
 const newsArticleAuthor             = document.getElementById('newsArticleAuthor')
 const newsArticleComments           = document.getElementById('newsArticleComments')
@@ -837,7 +837,7 @@ function slide_(up){
 }
 
 // Bind news button.
-/*
+
 document.getElementById('newsButton').onclick = () => {
     // Toggle tabbing.
     if(newsActive){
@@ -856,7 +856,6 @@ document.getElementById('newsButton').onclick = () => {
     slide_(!newsActive)
     newsActive = !newsActive
 }
-*/
 
 // Array to store article meta.
 let newsArr = null
@@ -947,9 +946,7 @@ function showNewsAlert(){
  * content has finished loading and transitioning.
  */
 function initNews(){
-
     return new Promise((resolve, reject) => {
-      /*
         setNewsLoading(true)
 
         let news = {}
@@ -1045,7 +1042,6 @@ function initNews(){
             }
 
         })
-        */
 
     })
 }
@@ -1104,12 +1100,37 @@ function displayArticle(articleObject, index){
  */
 function loadNews(){
     return new Promise((resolve, reject) => {
-        const distroData = DistroManager.getDistribution()
-        const newsFeed = distroData.getRSS()
-        const newsHost = new URL(newsFeed).origin + '/'
+        const response = ipcRenderer.sendSync('getNews')
+
+        if (response == 'failed') {
+            resolve({
+                articles: null
+            })
+        } else {
+            try {
+                const json = JSON.parse(response)
+                const articles = [{
+                    'title': json.title,
+                    'author': json.author,
+                    'date': json.timestamp,
+                    'content': json.desc,
+                    'comments': null,
+                    'commentsLink': null,
+                    'link': 'https://pokeresort.com'
+                }]
+                resolve({ articles })
+            } catch {
+                resolve({
+                    articles: null
+                })
+            }
+        }
+
+        /*
         $.ajax({
             url: newsFeed,
             success: (data) => {
+                console.log(data)
                 const items = $(data).find('item')
                 const articles = []
 
@@ -1159,5 +1180,6 @@ function loadNews(){
                 articles: null
             })
         })
+        */
     })
 }
