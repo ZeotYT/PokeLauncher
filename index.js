@@ -5,6 +5,7 @@ const ejse                          = require('ejs-electron')
 const fs                            = require('fs')
 const isDev                         = require('./app/assets/js/isdev')
 const news                          = require('./app/assets/js/news')
+const donators                      = require('./app/assets/js/donators')
 const path                          = require('path')
 const semver                        = require('semver')
 const url                           = require('url')
@@ -167,8 +168,15 @@ ipcMain.on('getNews', (event, arg) => {
     news.getNews().then(ret => {
         event.returnValue = ret
     }).catch(err => {
-        event.returnValue = 'failed'
+        event.returnValue = ''
     })
+})
+
+// Fetch donators
+ipcMain.on('getDonators', (event, arg) => {
+    donators.getDonators().then(ret => {
+        event.reply('donatorsReply', ret)
+    }).catch(err => { console.log(err) })
 })
 
 // https://github.com/electron/electron/issues/18397

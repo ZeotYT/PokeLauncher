@@ -847,7 +847,7 @@ document.getElementById('newsButton').onclick = () => {
         $('#landingContainer *').attr('tabindex', '-1')
         $('#newsContainer, #newsContainer *, #lower, #lower #center *').removeAttr('tabindex')
         if(newsAlertShown){
-            $('#newsButtonAlert').fadeOut(2000)
+            //$('#newsButtonAlert').fadeOut(2000)
             newsAlertShown = false
             ConfigManager.setNewsCacheDismissed(true)
             ConfigManager.save()
@@ -935,7 +935,7 @@ let newsAlertShown = false
  */
 function showNewsAlert(){
     newsAlertShown = true
-    $(newsButtonAlert).fadeIn(250)
+    //$(newsButtonAlert).fadeIn(250)
 }
 
 /**
@@ -1099,31 +1099,24 @@ function displayArticle(articleObject, index){
  * distribution index.
  */
 function loadNews(){
-    return new Promise((resolve, reject) => {
-        const response = ipcRenderer.sendSync('getNews')
-
-        if (response == 'failed') {
+return new Promise((resolve, reject) => {
+    const response = ipcRenderer.sendSync('getNews')
+        try {
+            const json = JSON.parse(response)
+            const articles = [{
+                'title': json.title,
+                'author': json.author,
+                'date': json.timestamp,
+                'content': json.desc,
+                'comments': null,
+                'commentsLink': null,
+                'link': 'https://pokeresort.com'
+            }]
+            resolve({ articles })
+        } catch {
             resolve({
                 articles: null
             })
-        } else {
-            try {
-                const json = JSON.parse(response)
-                const articles = [{
-                    'title': json.title,
-                    'author': json.author,
-                    'date': json.timestamp,
-                    'content': json.desc,
-                    'comments': null,
-                    'commentsLink': null,
-                    'link': 'https://pokeresort.com'
-                }]
-                resolve({ articles })
-            } catch {
-                resolve({
-                    articles: null
-                })
-            }
         }
 
         /*
@@ -1183,3 +1176,48 @@ function loadNews(){
         */
     })
 }
+
+/**
+ * Donator List Loading Functions
+ */
+
+const donatorsElement = document.getElementById('donatorsContent')
+const donatorsTitle = document.getElementById('donatorsTitle')
+ipcRenderer.send('getDonators')
+
+ipcRenderer.on('donatorsReply', (event, donators) => {
+    $('#donatorsContent').hide().fadeIn(2000)
+    $('#donatorsTitle').hide().fadeIn(2000)
+    for (let donator of donators) {
+        const donatorElement = document.createElement('a')
+        const donatorImage = document.createElement('img')
+        const donatorContent = document.createElement('div')
+        const donatorName = document.createElement('p')
+        const donatorPackage = document.createElement('p')
+        const donatorToolTip = document.createElement('div')
+
+        donatorElement.className = 'donator'
+        donatorElement.href = 'https://store.pokeresort.com/'
+        donatorElement.appendChild(donatorImage)
+        donatorElement.appendChild(donatorContent)
+        donatorElement.appendChild(donatorToolTip)
+
+        donatorImage.className = 'donatorImage'
+        donatorImage.src = `https://minotar.net/avatar/${donator.uuid}`
+
+        donatorName.className = 'donatorName'
+        donatorName.innerText = donator.name
+
+        donatorContent.appendChild(donatorName)
+        donatorContent.appendChild(donatorPackage)
+
+        donatorPackage.className = 'donatorPackage'
+        donatorPackage.innerText = donator.package
+
+        donatorToolTip.className = 'donatorToolTip'
+        donatorToolTip.innerText = 'Purchase ranks, keys & more'
+        
+        donatorsElement.appendChild(donatorElement)
+        $('#donatorsContent').last().hide().fadeIn(1000)
+    }
+})
