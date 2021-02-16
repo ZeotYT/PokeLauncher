@@ -2416,8 +2416,8 @@ input:checked + .toggleSwitchSlider:before {
     height: 100%;
 }
 #landingContainer > #upper > #right {
-    display: inline-flex;
-    width: 15%;
+    display: flex;
+    flex-direction: column;
     height: 100%;
 }
 
@@ -2428,20 +2428,17 @@ input:checked + .toggleSwitchSlider:before {
     background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
 #landingContainer > #lower > #left {
-    position: relative;
     transition: top 2s ease;
     top: 0px;
     height: 100%;
     width: 33%;
-    display: inline-flex;
-    justify-content: center;
 }
 #landingContainer > #lower > #left #content {
     position: relative;
     top: 25px;
     display: inline-flex;
     line-height: 24px;
-    left: 50px;
+    left: 42.5px;
 }
 #landingContainer > #lower > #center {
     position: relative;
@@ -2459,12 +2456,10 @@ input:checked + .toggleSwitchSlider:before {
     top: 10px;
 }
 #landingContainer > #lower > #right {
-    position: relative;
     transition: top 2s ease;
     top: 0px;
     height: 100%;
     width: 33%;
-    display: inline-flex;
 }
 
 /*******************************************************************************
@@ -3033,7 +3028,8 @@ input:checked + .toggleSwitchSlider:before {
     flex-direction: column;
     position: relative;
     top: 50px;
-    align-items: center;
+    right: 32.5px;
+    align-items: flex-end;
     width: 100% !important;
     height: calc(100% - 50px);
 }
@@ -3294,10 +3290,8 @@ input:checked + .toggleSwitchSlider:before {
 
 /* Tournament styles. */
 #tournamentContent {
-    margin-top: 5px;
-    position: relative;
+    margin: 5px 10px 0 0;
     width: 275px;
-    right: 67.5px;
     padding: 8px 5px;
     text-align: center;
     text-decoration: none;
@@ -3305,6 +3299,7 @@ input:checked + .toggleSwitchSlider:before {
     background-color: #39445e;
     transition: all 250ms ease-in-out;
     box-shadow: rgba(0, 0, 0, 0.45) 1px 4px 10px 0px;
+    position: relative;
 }
 
 #tournamentContent:hover {
@@ -3571,9 +3566,11 @@ input:checked + .toggleSwitchSlider:before {
 
 /* Main launch content container. */
 #landingContainer > #lower > #right #launch_content {
-    position: relative;
-    top: 25px;
+    position: absolute;
     display: inline-flex;
+    line-height: 24px;
+    right: 42.5px;
+    margin-top: 12.5px;
 }
 
 /* The launch button. */
@@ -3586,9 +3583,12 @@ input:checked + .toggleSwitchSlider:before {
     text-shadow: 0px 0px 0px #bebcbb;
     font-size: 30px;
     padding: 0px;
+    margin: 0px 0px 5px 0px;
     transition: 0.25s ease;
     outline: none;
     font-family: 'Acknowtt';
+    display: flex;
+    align-items: center;
 }
 #launch_button:hover,
 #launch_button:focus {
@@ -3603,6 +3603,43 @@ input:checked + .toggleSwitchSlider:before {
     cursor: default;
     pointer-events: none;
 }
+
+#launch_button #text {
+    margin-top: 10px;
+}
+
+#launch_button:after {
+    font-family: 'Oxanium Regular';
+    content: '\203A';
+    margin: 6px 5px 0 5px;
+    animation: arrows 1s steps(5, end) infinite;
+}
+
+@keyframes arrows {
+    0%, 20% {
+      color: rgba(0,0,0,0);
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);
+    }
+    40% {
+      color: white;
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);
+    }
+    60% {
+      text-shadow:
+        .25em 0 0 white,
+        .5em 0 0 rgba(0,0,0,0);
+    }
+    80%, 100% {
+      text-shadow:
+        .25em 0 0 white,
+        .5em 0 0 white;
+    }
+}
+  
 
 /* Launch details main container, hidden until launch processing begins. */
 #launch_details {
