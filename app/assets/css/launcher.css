@@ -2432,6 +2432,7 @@ input:checked + .toggleSwitchSlider:before {
     top: 0px;
     height: 100%;
     width: 33%;
+    position: relative;
 }
 #landingContainer > #lower > #left #content {
     position: relative;
@@ -2460,6 +2461,7 @@ input:checked + .toggleSwitchSlider:before {
     top: 0px;
     height: 100%;
     width: 33%;
+    position: relative;
 }
 
 /*******************************************************************************
@@ -3643,8 +3645,9 @@ input:checked + .toggleSwitchSlider:before {
 
 /* Launch details main container, hidden until launch processing begins. */
 #launch_details {
-    position: relative;
+    position: absolute;
     top: 25px;
+    right: 42.5px;
     display: none;
 }
 
