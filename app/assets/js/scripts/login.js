@@ -303,24 +303,30 @@ loginButton.addEventListener('click', () => {
 
 loginMSButton.addEventListener('click', (event) => {
     ipcRenderer.send('openMSALoginWindow', 'open')
-}) 
+})
 
 ipcRenderer.on('MSALoginWindowReply', (event, ...args) => {
     if (args[0] === 'error') {
-        setOverlayContent('LOGIN FAIL', 'Theres a window already open!', 'OK')
+        setOverlayContent('ERROR', 'There is already a login window open!', 'OK')
         setOverlayHandler(() => {
             toggleOverlay(false)
         })
         toggleOverlay(true)
         return
     }
-    
+
     const queryMap = args[0]
-    if(queryMap.has('error')) {
+    if (queryMap.has('error')) {
         let error = queryMap.get('error')
         let errorDesc = queryMap.get('error_description')
+        if(error === 'access_denied'){
+            error = 'ERRPR'
+
+            errorDesc = 'PokeLauncher does not have the required permissions for your Microsoft account.'
+        }        
         setOverlayContent(error, errorDesc, 'OK')
         setOverlayHandler(() => {
+            loginMSButton.disabled = false
             toggleOverlay(false)
         })
         toggleOverlay(true)
@@ -342,7 +348,7 @@ ipcRenderer.on('MSALoginWindowReply', (event, ...args) => {
         setTimeout(() => {
             switchView(VIEWS.login, loginViewOnSuccess, 500, 500, () => {
                 // Temporary workaround
-                if(loginViewOnSuccess === VIEWS.settings){
+                if (loginViewOnSuccess === VIEWS.settings) {
                     prepareSettings()
                 }
                 loginViewOnSuccess = VIEWS.landing // Reset this for good measure.
@@ -358,17 +364,16 @@ ipcRenderer.on('MSALoginWindowReply', (event, ...args) => {
             })
         }, 1000)
     }).catch(error => {
+        loginMSButton.disabled = false
         loginLoading(false)
-        setOverlayContent('Account Error', `Failed to authenticate your Microsoft account!`, 'Microsoft Log Out', 'Cancel')
+        setOverlayContent('ERROR', error.message ? error.message : 'An error occurred while logging in with Microsoft! For more detailed information please check the log. You can open it with CTRL + SHIFT + I.', 'Microsoft Log Out')
         setOverlayHandler(() => {
             ipcRenderer.send('openMSALogoutWindow', 'open')
             formDisabled(false)
             toggleOverlay(false)
         })
-        setDismissHandler(() => {
-            toggleOverlay(false)
-        })
         toggleOverlay(true)
         loggerLogin.error(error)
     })
+
 })

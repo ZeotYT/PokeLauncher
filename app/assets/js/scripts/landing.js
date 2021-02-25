@@ -1103,15 +1103,18 @@ return new Promise((resolve, reject) => {
     const response = ipcRenderer.sendSync('getNews')
         try {
             const json = JSON.parse(response)
-            const articles = [{
-                'title': json.title,
-                'author': json.author,
-                'date': json.timestamp,
-                'content': json.desc,
-                'comments': null,
-                'commentsLink': null,
-                'link': 'https://pokeresort.com'
-            }]
+            const articles = []
+            for (let article of json) {
+                articles.push({
+                    'title': article.title,
+                    'author': article.author,
+                    'date': article.timestamp,
+                    'content': article.desc,
+                    'comments': null,
+                    'commentsLink': null,
+                    'link': 'https://pokeresort.com'
+                })
+            }
             resolve({ articles })
         } catch {
             resolve({

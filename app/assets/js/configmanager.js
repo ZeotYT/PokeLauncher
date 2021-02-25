@@ -326,7 +326,7 @@ exports.getAuthAccount = function(uuid){
  *
  * @returns {Object} The authenticated account object created by this action.
  */
-exports.updateAuthAccount = function(uuid, accessToken){
+exports.updateAuthAccount = function(uuid, accessToken, expiresAt = undefined){
     config.authenticationDatabase[uuid].accessToken = accessToken
     config.authenticationDatabase[uuid].expiresAt = expiresAt
     return config.authenticationDatabase[uuid]
@@ -706,4 +706,4 @@ exports.updateMicrosoftAuth = (accessToken, expiresAt) => {
     config.microsoftAuth.expires_at = expiresAt
 
     return config.microsoftAuth
-} 
+}  

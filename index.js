@@ -13,6 +13,9 @@ const redirectLoginUriPrefix = 'https://login.microsoftonline.com/common/oauth2/
 const redirectLogoutUriPrefix = 'https://localhost/logout'
 const clientId = 'edd5fbca-c65b-4949-8fc2-6335e26a511e'
 
+const redirectUriPrefix = 'https://login.microsoftonline.com/common/oauth2/nativeclient?'
+const clientID = '3530b541-1564-4c3d-bb2f-407c1b0e0e5d'
+
 // Setup auto updater.
 function initAutoUpdater(event, data) {
 
@@ -99,12 +102,12 @@ ipcMain.on('openMSALoginWindow', (ipcEvent, args) => {
         ipcEvent.sender.send('MSALoginWindowNotification', 'error', 'AlreadyOpenException')
         return
     }
-    
     MSALoginWindow = new BrowserWindow({
+        title: 'Microsoft-Login',
         minWidth: 600,
         minHeight: 400,
-        width: 600,
-        height: 400,
+        width: 800,
+        height: 600,
         contextIsolation: false
     })
 
@@ -113,8 +116,8 @@ ipcMain.on('openMSALoginWindow', (ipcEvent, args) => {
     })
 
     MSALoginWindow.webContents.on('did-navigate', (event, uri, responseCode, statusText) => {
-        if(uri.startsWith(redirectLoginUriPrefix)) {
-            let querys = uri.substring(redirectLoginUriPrefix.length).split('#', 1).toString().split('&')
+        if(uri.startsWith(redirectUriPrefix)) {
+            let querys = uri.substring(redirectUriPrefix.length).split('#', 1).toString().split('&')
             let queryMap = new Map()
 
             querys.forEach(query => {
