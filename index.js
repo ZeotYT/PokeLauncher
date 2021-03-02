@@ -1,5 +1,5 @@
 // Requirements
-const { app, BrowserWindow, ipcMain, Menu } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu, screen } = require('electron')
 const autoUpdater                   = require('electron-updater').autoUpdater
 const ejse                          = require('ejs-electron')
 const fs                            = require('fs')
@@ -9,12 +9,7 @@ const donators                      = require('./app/assets/js/donators')
 const path                          = require('path')
 const semver                        = require('semver')
 const url                           = require('url')
-const redirectLoginUriPrefix = 'https://login.microsoftonline.com/common/oauth2/nativeclient?'
-const redirectLogoutUriPrefix = 'https://localhost/logout'
-const clientId = 'edd5fbca-c65b-4949-8fc2-6335e26a511e'
-
-const redirectUriPrefix = 'https://login.microsoftonline.com/common/oauth2/nativeclient?'
-const clientID = '3530b541-1564-4c3d-bb2f-407c1b0e0e5d'
+const redirectLoginUriPrefix = 'https://login.live.com/oauth20_remoteconnect.srf?'
 
 // Setup auto updater.
 function initAutoUpdater(event, data) {
@@ -97,17 +92,19 @@ let MSALoginWindow = null
 let MSALogoutWindow = null
 
 // Open the Microsoft Account Login window
-ipcMain.on('openMSALoginWindow', (ipcEvent, args) => {
+ipcMain.on('openMSALoginWindow', (ipcEvent, args, flowResponse) => {
     if(MSALoginWindow != null){ 
         ipcEvent.sender.send('MSALoginWindowNotification', 'error', 'AlreadyOpenException')
         return
     }
     MSALoginWindow = new BrowserWindow({
-        title: 'Microsoft-Login',
+        title: 'Microsoft Login',
         minWidth: 600,
         minHeight: 400,
         width: 800,
         height: 600,
+        x: 0,
+        y: screen.getPrimaryDisplay().workAreaSize.height/2 - 300,
         contextIsolation: false
     })
 
@@ -116,54 +113,15 @@ ipcMain.on('openMSALoginWindow', (ipcEvent, args) => {
     })
 
     MSALoginWindow.webContents.on('did-navigate', (event, uri, responseCode, statusText) => {
-        if(uri.startsWith(redirectUriPrefix)) {
-            let querys = uri.substring(redirectUriPrefix.length).split('#', 1).toString().split('&')
-            let queryMap = new Map()
-
-            querys.forEach(query => {
-                let arr = query.split('=')
-                queryMap.set(arr[0], decodeURI(arr[1]))
-            })
-
-            ipcEvent.reply('MSALoginWindowReply', queryMap)
-
+        if(uri.startsWith(redirectLoginUriPrefix) && uri.includes('res=success')) {
             MSALoginWindow.close()
             MSALoginWindow = null
+            ipcEvent.reply('MSALoginWindowReply')
         }
     })
 
     MSALoginWindow.removeMenu()
-    MSALoginWindow.loadURL('https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?client_id=' + clientId + '&response_type=code&scope=XboxLive.signin%20offline_access&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient')
-})
-
-// Open Microsoft Account Logout Window
-ipcMain.on('openMSALogoutWindow', (ipcEvent, args) => {
-    if(MSALogoutWindow != null){ 
-        ipcEvent.sender.send('MSALogoutWindowNotification', 'error', 'AlreadyOpenException')
-        return
-    }
-    
-    MSALogoutWindow = new BrowserWindow({
-        minWidth: 700,
-        minHeight: 500,
-        width: 700,
-        height: 500,
-        contextIsolation: false
-    })
-
-    MSALogoutWindow.on('closed', () => {
-        MSALogoutWindow = null
-    })
-
-    MSALogoutWindow.webContents.on('did-navigate', (event, uri, responseCode, statusText) => {
-        if(uri.startsWith(redirectLogoutUriPrefix)) {
-            MSALogoutWindow.close()
-            MSALogoutWindow = null
-        }
-    })
-
-    MSALogoutWindow.removeMenu()
-    MSALogoutWindow.loadURL('https://login.microsoftonline.com/common/oauth2/v2.0/logout')
+    MSALoginWindow.loadURL(flowResponse.verificationUri)
 })
 
 // Fetch news

@@ -1,5 +1,6 @@
 // Requirements
-const os     = require('os')
+const os = require('os')
+const rimraf = require('rimraf')
 const semver = require('semver')
 
 const { JavaGuard } = require('./assets/js/assetguard')
@@ -359,6 +360,8 @@ function bindAuthAccountLogOut(){
             let uuid = val.closest('.settingsAuthAccount').getAttribute('uuid')
             let authAccounts = ConfigManager.getAuthAccounts()
             let isMicrosoft = false
+            let sysRoot = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME)
+            let nmpPath = path.join(sysRoot, 'PokeLauncher/nmp-cache')
 
             if (authAccounts[uuid].type === "microsoft") {
                 isMicrosoft = true
@@ -374,11 +377,10 @@ function bindAuthAccountLogOut(){
                 )
                 setOverlayHandler(() => {
                     if (isMicrosoft) {
-                        ipcRenderer.send('openMSALogoutWindow', 'open')
-                        ConfigManager.removeAuthAccount(uuid)
-                    } else {
-                        processLogOut(val, isLastAccount)
+                        rimraf.sync(nmpPath)
                     }
+                    ConfigManager.removeAuthAccount(uuid)
+                    processLogOut(val, isLastAccount)
                     
                     toggleOverlay(false)
                     switchView(getCurrentView(), VIEWS.login)
@@ -392,9 +394,8 @@ function bindAuthAccountLogOut(){
                 toggleOverlay(true, true)
             } else {
                 if (isMicrosoft) {
-                    ipcRenderer.send('openMSALogoutWindow', 'open')
-                    console.log("Microsoft account has been removed: ")
-                    console.log(ConfigManager.removeAuthAccount(uuid))
+                    rimraf.sync(nmpPath)
+                    ConfigManager.removeAuthAccount(uuid)
                 }
 
                 processLogOut(val, isLastAccount)

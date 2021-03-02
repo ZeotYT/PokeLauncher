@@ -301,54 +301,35 @@ loginButton.addEventListener('click', () => {
 
 })
 
+let flowResponseCalled = false;
+
 loginMSButton.addEventListener('click', (event) => {
-    ipcRenderer.send('openMSALoginWindow', 'open')
-})
-
-ipcRenderer.on('MSALoginWindowReply', (event, ...args) => {
-    if (args[0] === 'error') {
-        setOverlayContent('ERROR', 'There is already a login window open!', 'OK')
-        setOverlayHandler(() => {
-            toggleOverlay(false)
-        })
-        toggleOverlay(true)
-        return
-    }
-
-    const queryMap = args[0]
-    if (queryMap.has('error')) {
-        let error = queryMap.get('error')
-        let errorDesc = queryMap.get('error_description')
-        if(error === 'access_denied'){
-            error = 'ERRPR'
-
-            errorDesc = 'PokeLauncher does not have the required permissions for your Microsoft account.'
-        }        
-        setOverlayContent(error, errorDesc, 'OK')
-        setOverlayHandler(() => {
-            loginMSButton.disabled = false
-            toggleOverlay(false)
-        })
-        toggleOverlay(true)
-        return
-    }
-
-    // Disable form.
     formDisabled(true)
-
-    // Show loading stuff.
-    loginLoading(true)
-
-    const authCode = queryMap.get('code')
-    AuthManager.addMSAccount(authCode).then(account => {
+    AuthManager.addMSAccount(response => {
+        if (!flowResponseCalled) {
+            loginLoading(true)
+            flowResponseCalled = true
+            // PrismarineJS node-minecraft-protocol flow response callback
+            setOverlayContent('Authorization Code', '<h1 style="margin: 5px 0;">' + response.userCode + '</h1>', 'Dismiss')
+            setOverlayHandler(() => {
+                formDisabled(false)
+                toggleOverlay(false)
+            })
+            toggleOverlay(true)
+            ipcRenderer.send('openMSALoginWindow', 'open', response)
+        }
+    })
+    .then(account => {
+        toggleOverlay(false)
         updateSelectedAccount(account)
         loginButton.innerHTML = loginButton.innerHTML.replace(Lang.queryJS('login.loggingIn'), Lang.queryJS('login.success'))
         $('.circle-loader').toggleClass('load-complete')
         $('.checkmark').toggle()
+        flowResponseCalled = false
         setTimeout(() => {
             switchView(VIEWS.login, loginViewOnSuccess, 500, 500, () => {
                 // Temporary workaround
-                if (loginViewOnSuccess === VIEWS.settings) {
+                if(loginViewOnSuccess === VIEWS.settings){
                     prepareSettings()
                 }
                 loginViewOnSuccess = VIEWS.landing // Reset this for good measure.
@@ -362,18 +343,24 @@ ipcRenderer.on('MSALoginWindowReply', (event, ...args) => {
                 loginButton.innerHTML = loginButton.innerHTML.replace(Lang.queryJS('login.success'), Lang.queryJS('login.login'))
                 formDisabled(false)
             })
-        }, 1000)
-    }).catch(error => {
-        loginMSButton.disabled = false
+        }, 500)
+    })
+    .catch(error => {
         loginLoading(false)
-        setOverlayContent('ERROR', error.message ? error.message : 'An error occurred while logging in with Microsoft! For more detailed information please check the log. You can open it with CTRL + SHIFT + I.', 'Microsoft Log Out')
+        setOverlayContent('Account Error', `Failed to authenticate your Microsoft account!`, 'Cancel')
         setOverlayHandler(() => {
-            ipcRenderer.send('openMSALogoutWindow', 'open')
             formDisabled(false)
+            toggleOverlay(false)
+        })
+        setDismissHandler(() => {
             toggleOverlay(false)
         })
         toggleOverlay(true)
         loggerLogin.error(error)
+        flowResponseCalled = false
     })
+}) 
 
+ipcRenderer.on('MSALoginWindowReply', (event) => {
+    toggleOverlay(false)
 })
