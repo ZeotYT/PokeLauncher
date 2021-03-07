@@ -43,15 +43,8 @@ exports.authMinecraft = flowCallback => {
 
         const flow = new MsAuthFlow(null, pokeLauncherPath, flowCallback)
         const MCToken = await flow.getMinecraftToken()
-        try {
-            const MSToken = await flow.msa.getAccessToken().token
-            resolve({
-                MSToken: MSToken,
-                MCToken: MCToken
-            })     
-        } catch {
-            resolve(await this.authMinecraft(flowCallback))
-        }
+
+        resolve(MCToken)   
         }).catch(error => {
             reject(error)
         })

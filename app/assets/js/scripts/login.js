@@ -310,13 +310,16 @@ loginMSButton.addEventListener('click', (event) => {
             loginLoading(true)
             flowResponseCalled = true
             // PrismarineJS node-minecraft-protocol flow response callback
-            setOverlayContent('Authorization Code', '<h1 style="margin: 5px 0;">' + response.userCode + '</h1>', 'Dismiss')
+            setOverlayContent('Authorization Code', '<h1 style="margin: 0;">' + response.userCode + '</h1><br>Press Continue and enter this code in the pop-up window!<br>Note: Office365APIEditor is used to authenticate your Microsoft account', 'Continue')
             setOverlayHandler(() => {
-                formDisabled(false)
-                toggleOverlay(false)
+                ipcRenderer.send('openMSALoginWindow', 'open', response)
+                setOverlayContent('Authorization Code', '<h1 style="margin: 5px 0;">' + response.userCode + '</h1><br>Enter this code in the pop-up window!<br>Note: Office365APIEditor is used to authenticate your Microsoft account', 'Dismiss')
+                setOverlayHandler(() => {
+                    formDisabled(false)
+                    toggleOverlay(false)
+                })    
             })
             toggleOverlay(true)
-            ipcRenderer.send('openMSALoginWindow', 'open', response)
         }
     })
     .then(account => {
@@ -363,4 +366,12 @@ loginMSButton.addEventListener('click', (event) => {
 
 ipcRenderer.on('MSALoginWindowReply', (event) => {
     toggleOverlay(false)
+})
+
+// Enter key press event
+document.addEventListener('keydown', event => {
+    if (event.key == 'Enter') {
+        event.preventDefault()
+        loginButton.click()
+    }
 })

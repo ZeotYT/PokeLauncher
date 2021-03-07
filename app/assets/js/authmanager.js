@@ -152,10 +152,9 @@ exports.validateSelected = async function(){
 exports.addMSAccount = flowCallback => {
     return new Promise(async (resolve, reject) => {
         try {
-            const Tokens = await Microsoft.authMinecraft(flowCallback)
-            ConfigManager.setMicrosoftAuth(Tokens.MSToken)
-            const MCProfile = await Microsoft.getMCProfile(Tokens.MCToken)
-            const ret = ConfigManager.addAuthAccount(MCProfile.id, Tokens.MCToken, MCProfile.name, MCProfile.name, null, 'microsoft')
+            const MCToken = await Microsoft.authMinecraft(flowCallback)
+            const MCProfile = await Microsoft.getMCProfile(MCToken)
+            const ret = ConfigManager.addAuthAccount(MCProfile.id, MCToken, MCProfile.name, MCProfile.name, null, 'microsoft')
             ConfigManager.save()
             resolve(ret)
         } catch (error) {

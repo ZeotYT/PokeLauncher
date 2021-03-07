@@ -1,5 +1,5 @@
 // Requirements
-const { app, BrowserWindow, ipcMain, Menu, screen } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const autoUpdater                   = require('electron-updater').autoUpdater
 const ejse                          = require('ejs-electron')
 const fs                            = require('fs')
@@ -89,7 +89,6 @@ ipcMain.on('distributionIndexDone', (event, res) => {
 app.disableHardwareAcceleration()
 
 let MSALoginWindow = null
-let MSALogoutWindow = null
 
 // Open the Microsoft Account Login window
 ipcMain.on('openMSALoginWindow', (ipcEvent, args, flowResponse) => {
@@ -101,10 +100,8 @@ ipcMain.on('openMSALoginWindow', (ipcEvent, args, flowResponse) => {
         title: 'Microsoft Login',
         minWidth: 600,
         minHeight: 400,
-        width: 800,
-        height: 600,
-        x: 0,
-        y: screen.getPrimaryDisplay().workAreaSize.height/2 - 300,
+        width: 600,
+        height: 400,
         contextIsolation: false
     })
 

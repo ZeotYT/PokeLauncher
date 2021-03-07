@@ -3748,7 +3748,7 @@ input:checked + .toggleSwitchSlider:before {
     flex-direction: column;
     align-items: center;
     /*justify-content: space-between;*/
-    width: 300px;
+    width: 400px;
     /*height: 35%;*/
     box-sizing: border-box;
     padding: 15px 0px;
